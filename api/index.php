@@ -1,24 +1,25 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-
-<html>
-<head>
-	<title>guohai.org android api</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-</head>
-
-<body>
-
 <?php
-require_once '../config.php';
+require_once '../config.inc.php';
 require_once '../include/db_class.php';
 $DB = new MySqlClass(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
 
+	//增加一条用户消息
     function AddNewMessage($DB,$Note,$SendAccount,$Latitude,$Longitude,$Altitude,$AddressZH,$AddressEN)
     {
         $sql = "INSERT INTO cta_message (send_account,note,latitude,longitude,altitude,address_zh,address_en)VALUES('$SendAccount','$Note','$Latitude','$Longitude','$Altitude','$AddressZH','$AddressEN')";
         $result=$DB->ExeSql($sql);
         return "succeed";
     }
+    
+    //记录反向解释日志
+    function ParseGPS($DB,$address,$imei)
+    {
+    	$sql = "INSERT INTO cta_parse_gps_log (imei,address)values('$imei','$address')";
+    	$result=$DB->ExeSql($sql);
+        return "succeed";
+    }
+    
+    //通过坐标取物理地址
     function GetAddress($url)
 	{
 		$file = fopen($url,"r");
@@ -31,17 +32,27 @@ $DB = new MySqlClass(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
 		$address=json_decode($line);
 		return $address->results[0]->formatted_address;
 	}
-
+switch(@$_GET['fun'])
+{
+	case 'parse':
+		$SendAccount = $_POST['SendAccount'];
+		$Latitude = $_POST['Latitude'];
+		$Longitude = $_POST['Longitude'];
+		$AddressZH=GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");
+		ParseGPS($DB,$AddressZH,$SendAccount);
+		echo $AddressZH;
+		break;
+	case 'add':
+		$Note = $_POST['Note'];
+		$SendAccount = $_POST['SendAccount'];
+		$Latitude = $_POST['Latitude'];
+		$Longitude = $_POST['Longitude'];
+		$Altitude = $_POST['Altitude'];
+		$AddressZH=GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");
+		$AddressEN=GetAddress("http://maps.google.cn/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");;
+		AddNewMessage($DB,$Note,$SendAccount,$Latitude,$Longitude,$AddressZH,$AddressEN);
+		break;
+}
     
-$Note = $_POST['Note'];
-$SendAccount = $_POST['SendAccount'];
-$Latitude = $_POST['Latitude'];
-$Longitude = $_POST['Longitude'];
-$Altitude = $_POST['Altitude'];
-$AddressZH=GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");
-$AddressEN=GetAddress("http://maps.google.cn/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");;
-AddNewMessage($DB,$Note,$SendAccount,$Latitude,$Longitude,$AddressZH,$AddressEN);
-?>
 
-</body>
-</html>
+?>
