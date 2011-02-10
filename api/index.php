@@ -93,9 +93,11 @@ switch(@$_GET['fun'])
 		$imei = $_POST['imei'];
 		$jsonString =FromGSMGetAddress($cellId,$locationAreaCode,$mobileCountryCode,$mobileNetworkCode);
 		$arr = json_decode($jsonString,true);
-		echo $arr["location"]["latitude"].",".$arr["location"]["longitude"];
-		$address = GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$arr["location"]["latitude"].",".$arr["location"]["longitude"]."&sensor=true");
-		GsmLog($DB,$cellId,$locationAreaCode,$mobileCountryCode,$mobileNetworkCode,$imei,$arr["location"]["latitude"],$arr["location"]["longitude"],$address);
+		$latitude = empty($arr["location"]["latitude"])?0.0:$arr["location"]["latitude"];
+		$longitude = empty($arr["location"]["longitude"])?0.0:$arr["location"]["longitude"];
+		echo $latitude.",".$longitude;
+		$address = GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$latitude.",".$longitude."&sensor=true");
+		GsmLog($DB,$cellId,$locationAreaCode,$mobileCountryCode,$mobileNetworkCode,$imei,$latitude,$longitude,$address);
 		break;
 }
     
