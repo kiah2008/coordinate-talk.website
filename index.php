@@ -23,9 +23,11 @@ if(!empty($_COOKIE['Cta_auth'])) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Coordinate Talk Home</title>
+<script type="text/javascript" src="js/jquery-1.5.min.js"></script>
+<script type="text/javascript" src="js/popup_layer.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-<script type="text/javascript" src="./js/jquery-1.5.min.js"></script>
 <script type="text/javascript">
+//初始化地图
 function initialize(){
 	var myOptions = {
 			zoom:9,
@@ -99,20 +101,86 @@ function setMarkers(map, locations) {
 	} 
 }
 
-function smallMap(divid,latitude,longitude) {
-    var myLatlng = new google.maps.LatLng(latitude,longitude);
-    var myOptions = {
-      zoom: 17,
-      center: myLatlng,
-      mapTypeId: google.maps.MapTypeId.HYBRID
-    }
-    var map = new google.maps.Map(document.getElementById(divid), myOptions);
-    
-    var marker = new google.maps.Marker({
-        position: myLatlng, 
-        map: map,
-        title:""
-    });
+$(document).ready(function()
+	{
+		$('#loginform').submit(function(){
+			jQuery.ajax({
+					url:"code/login.php",
+					data:$('#loginform').serialize(),
+					type:"POST",
+					beforeSend:function(){
+						new screenClass().lock();
+					},
+					error:function(request){
+						new screenClass().unlock();
+						alert("err");
+					},
+					success:function(data){
+						new screenClass().unlock();	
+					}
+				});
+			return false;
+			});
+		var t9 = new PopupLayer({trigger:"#ele9",popupBlk:"#blk9",closeBtn:"#close9",useOverlay:true,useFx:true,
+			offsets:{
+				x:0,
+				y:-41
+			}
+		});
+		t9.doEffects = function(way){
+			if(way == "open"){
+				this.popupLayer.css({opacity:0.3}).show(400,function(){
+					this.popupLayer.animate({
+						left:($(document).width() - this.popupLayer.width())/2,
+						top:(document.documentElement.clientHeight - this.popupLayer.height())/2 + $(document).scrollTop(),
+						opacity:0.8
+					},1000,function(){this.popupLayer.css("opacity",1)}.binding(this));
+				}.binding(this));
+			}
+			else{
+				this.popupLayer.animate({
+					left:this.trigger.offset().left,
+					top:this.trigger.offset().top,
+					opacity:0.1
+				},{duration:500,complete:function(){this.popupLayer.css("opacity",1);this.popupLayer.hide()}.binding(this)});
+			}
+		}
+	}
+);
+var screenClass = function(){
+	this.unlock = function()
+    {
+        var divLock = document.getElementById("divLock");
+        if(divLock == null) return;
+        document.body.removeChild(divLock);
+    };
+    this.lock = function()
+    {
+        var sWidth,sHeight;
+        var imgPath = "images/WaitProcess.gif";
+        sWidth  = screen.width - 20;
+        sHeight = screen.height- 170;
+        
+        var bgObj=document.createElement("div");
+        bgObj.setAttribute("id","divLock");
+        bgObj.style.position="absolute";
+        bgObj.style.top="0";
+        bgObj.style.background="#cccccc";
+        bgObj.style.filter="progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75";
+        bgObj.style.opacity="0.6";
+        bgObj.style.left="0";
+        bgObj.style.width=sWidth + "px";
+        bgObj.style.height=sHeight + "px";
+        bgObj.style.zIndex = "100";
+        document.body.appendChild(bgObj);
+        var html = "<table border=\"0\" width=\""+sWidth+"\" height=\""+sHeight+"\"><tr><td valign=\"middle\" align=\"center\"><image src=\""+imgPath+"\"></td></tr></table>";
+        bgObj.innerHTML = html;
+        // 解锁
+        bgObj.onclick = function()
+        {
+             //new screenClass().unlock();
+        }
+    };
 }
 </script>
 <style type="text/css">
@@ -136,17 +204,40 @@ table{
 </style>
 </head>
 <body onload="initialize()">
+        <div id="blk9" class="blk" style="display:none;">
+            <div class="head"><div class="head-right"></div></div>
+            <div class="main">
+                <h2>示例9,综合效果</h2>
+                <a href="javascript:void(0)" id="close9" class="closeBtn">关闭</a>
+                <ul>
+                    <li><a href="#">项目1</a></li>
+                    <li><a href="#">项目2</a></li>
+                    <li><a href="#">项目3</a></li>
+                    <li><a href="#">项目4</a></li>
+                    <li><a href="#">项目5</a></li>
+                    <li><a href="#">项目6</a></li>
+                    <li><a href="#">项目7</a></li>
+                    <li><a href="#">项目8</a></li>
+                    <li><a href="#">项目9</a></li>
+                    <li><a href="#">项目10</a></li>
+                    <li><a href="#">项目11</a></li>
+                    <li><a href="#">项目12</a></li>
+                </ul>
+            </div>
+            <div class="foot"><div class="foot-right"></div></div>
+        </div>
+        <div id="ele9" class="tigger">触发元素9</div>
     <div id="mainMap"></div>
     <div id="login">
      
     <?php 
     if(!$Cta_username){
 		//登录表单
-		echo '<form method="post" action="'.$_SERVER['PHP_SELF'].'?fun=login">';
+		echo '<form id="loginform" method="post" action="'.$_SERVER['PHP_SELF'].'?fun=login">';
 		echo '登录:';
 		echo '<dl><dt>用户名</dt><dd><input name="username" size="20"/></dd>';
 		echo '<dt>密　码</dt><dd><input name="password" type="password" size="20"/></dd></dl>';
-		echo '<input type="button" value="登陆"/><input type="button" value="注册"/>';
+		echo '<input type="Submit" value="登陆"/><input type="button" value="注册"/>';
 		echo '</form>';
     }else{
     	
@@ -171,11 +262,11 @@ table{
             $altitude = $row['altitude'];
             $create_date = $row['create_date'];
             $address=$row['address_zh'];
-            $html = "$html<tr><td>$code</td><td>$username</td><td>$note</td><td>$latitude<br/>$longitude<br/>$altitude</td><td>$address</td><td>$create_date</td><td><div id=\"map$code\"  style=\"width:300px; height:200px\"></div><script>smallMap(\"map$code\",$latitude,$longitude);</script></td></tr>\n";
+            $html = "$html<tr><td>$username</td><td>$note</td><td>$latitude<br/>$longitude<br/>$altitude</td><td>$address</td><td>$create_date</td><td><img src=\"http://maps.google.com/maps/api/staticmap?center=$latitude,$longitude&zoom=15&size=300x200&maptype=hybrid&markers=color:blue|label:C|$latitude,$longitude&sensor=false\" alt=\"$address\"/></td></tr>\n";
         }
         return $html;
     }
-    echo "<table>\n<tr><td>编号</td><td>账号</td><td>信息内容</td><td>经度，维度,海拔</td><td>可能地址</td><td>时间</td><td>地图</td></tr>\n";
+    echo "<table>\n<tr><td>账号</td><td>信息内容</td><td>经度，维度,海拔</td><td>可能地址</td><td>时间</td><td>地图</td></tr>\n";
 	echo GetMessageList($DB);
 	echo "</table>";
 	?>
