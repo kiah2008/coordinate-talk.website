@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>注册</title>
+<style type="text/css">
+@import "style/global.css";
+#registerForm{
+	width:300px;
+	background:#2b9d36;
+}
+</style>
+<script type="text/javascript" src="js/jquery-1.5.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function()
+	{
+		$('#registerForm').submit(function(){
+			jQuery.ajax({
+					url:"code/register_db.php",
+					data:$('#registerForm').serialize(),
+					type:"POST",
+					beforeSend:function(){
+						new screenClass().lock();
+					},
+					error:function(request){
+						new screenClass().unlock();
+						alert("err");
+					},
+					success:function(data){
+						new screenClass().unlock();	
+					}
+				});
+			return false;
+			});
+	}
+);
+var screenClass = function(){
+	this.unlock = function()
+    {
+        var divLock = document.getElementById("divLock");
+        if(divLock == null) return;
+        document.body.removeChild(divLock);
+    };
+    this.lock = function()
+    {
+        var sWidth,sHeight;
+        var imgPath = "images/WaitProcess.gif";
+        sWidth  = 600;
+        sHeight = 400;
+        
+        var bgObj=document.createElement("div");
+        bgObj.setAttribute("id","divLock");
+        bgObj.style.position="absolute";
+        bgObj.style.top="0";
+        bgObj.style.background="#cccccc";
+        bgObj.style.filter="progid:DXImageTransform.Microsoft.Alpha(style=3,opacity=25,finishOpacity=75";
+        bgObj.style.opacity="0.6";
+        bgObj.style.left="0";
+        bgObj.style.width=sWidth + "px";
+        bgObj.style.height=sHeight + "px";
+        bgObj.style.zIndex = "100";
+        document.body.appendChild(bgObj);
+        var html = "<table border=\"0\" width=\""+sWidth+"\" height=\""+sHeight+"\"><tr><td valign=\"middle\" align=\"center\"><image src=\""+imgPath+"\"></td></tr></table>";
+        bgObj.innerHTML = html;
+        // 解锁
+        bgObj.onclick = function()
+        {
+             //new screenClass().unlock();
+        }
+    };
+}
+</script>
+</head>
+<body>
+	<form id="registerForm" method="post">
+		<ul>
+			<li>您的常用邮箱:<input type="text" name="txtUserName" /> </li>
+			<li>密码:<input type="text" name="txtPass" /> </li>
+			<li>确认密码:<input type="text" name="txtRPass" /> </li>
+			<li>手机串号:<input type="text" name="txtImei" /> </li>
+			<li><input type="checkbox" CHECKED="checked" value="on"/></li>
+			<li><input type="Submit" value="登陆"/><input type="button"  onclick="self.parent.tb_remove();" value="取消"/></li>
+		</ul>
+		<input type="button" onclick="self.parent.testabc()" value="t"/>
+	</form>
+</body>
+</html>

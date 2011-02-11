@@ -2,6 +2,8 @@
 require_once './config.inc.php';
 require_once './include/db_class.php';
 include './include/db_mysql.class.php';
+include 'dal/get_display_data.php';
+
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 unset($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
@@ -24,7 +26,7 @@ if(!empty($_COOKIE['Cta_auth'])) {
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Coordinate Talk Home</title>
 <script type="text/javascript" src="js/jquery-1.5.min.js"></script>
-<script type="text/javascript" src="js/popup_layer.js"></script>
+<script src="js/thickbox-compressed.js" type="text/javascript"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript">
 //初始化地图
@@ -121,30 +123,6 @@ $(document).ready(function()
 				});
 			return false;
 			});
-		var t9 = new PopupLayer({trigger:"#ele9",popupBlk:"#blk9",closeBtn:"#close9",useOverlay:true,useFx:true,
-			offsets:{
-				x:0,
-				y:-41
-			}
-		});
-		t9.doEffects = function(way){
-			if(way == "open"){
-				this.popupLayer.css({opacity:0.3}).show(400,function(){
-					this.popupLayer.animate({
-						left:($(document).width() - this.popupLayer.width())/2,
-						top:(document.documentElement.clientHeight - this.popupLayer.height())/2 + $(document).scrollTop(),
-						opacity:0.8
-					},1000,function(){this.popupLayer.css("opacity",1)}.binding(this));
-				}.binding(this));
-			}
-			else{
-				this.popupLayer.animate({
-					left:this.trigger.offset().left,
-					top:this.trigger.offset().top,
-					opacity:0.1
-				},{duration:500,complete:function(){this.popupLayer.css("opacity",1);this.popupLayer.hide()}.binding(this)});
-			}
-		}
 	}
 );
 var screenClass = function(){
@@ -182,6 +160,10 @@ var screenClass = function(){
         }
     };
 }
+function testabc(){
+
+	alert("main");
+}
 </script>
 <style type="text/css">
 body{
@@ -201,32 +183,17 @@ table{
 	float: left;
 	margin:20px 20px 20px 20px;
 }
+#pageCOntent{
+	margin:0px auto;
+	width:980px;
+	height:100%;
+}
+@import "style/thickbox.css";
 </style>
 </head>
 <body onload="initialize()">
-        <div id="blk9" class="blk" style="display:none;">
-            <div class="head"><div class="head-right"></div></div>
-            <div class="main">
-                <h2>示例9,综合效果</h2>
-                <a href="javascript:void(0)" id="close9" class="closeBtn">关闭</a>
-                <ul>
-                    <li><a href="#">项目1</a></li>
-                    <li><a href="#">项目2</a></li>
-                    <li><a href="#">项目3</a></li>
-                    <li><a href="#">项目4</a></li>
-                    <li><a href="#">项目5</a></li>
-                    <li><a href="#">项目6</a></li>
-                    <li><a href="#">项目7</a></li>
-                    <li><a href="#">项目8</a></li>
-                    <li><a href="#">项目9</a></li>
-                    <li><a href="#">项目10</a></li>
-                    <li><a href="#">项目11</a></li>
-                    <li><a href="#">项目12</a></li>
-                </ul>
-            </div>
-            <div class="foot"><div class="foot-right"></div></div>
-        </div>
-        <div id="ele9" class="tigger">触发元素9</div>
+<div id="pageCOntent">
+
     <div id="mainMap"></div>
     <div id="login">
      
@@ -237,14 +204,14 @@ table{
 		echo '登录:';
 		echo '<dl><dt>用户名</dt><dd><input name="username" size="20"/></dd>';
 		echo '<dt>密　码</dt><dd><input name="password" type="password" size="20"/></dd></dl>';
-		echo '<input type="Submit" value="登陆"/><input type="button" value="注册"/>';
+		echo '<input type="Submit" value="登陆"/><a href="registerframe.html?KeepThis=true&TB_iframe=true&height=400&width=600" class="thickbox" title="注册">注册</a>';
 		echo '</form>';
     }else{
     	
     }
     
-    
     ?>
+
     </div>
     <?php
 	function GetMessageList($DB)
@@ -270,5 +237,6 @@ table{
 	echo GetMessageList($DB);
 	echo "</table>";
 	?>
+</div>
 </body>
 </html>
