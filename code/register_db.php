@@ -1,60 +1,60 @@
 <?php
 /**
- * UCenter Ó¦ÓÃ³ÌĞò¿ª·¢ Example
+ * UCenter åº”ç”¨ç¨‹åºå¼€å‘ Example
  *
- * Ó¦ÓÃ³ÌĞòÓĞ×Ô¼ºµÄÓÃ»§±í£¬ÓÃ»§×¢²á¡¢¼¤»îµÄ Example ´úÂë
- * Ê¹ÓÃµ½µÄ½Ó¿Úº¯Êı£º
- * uc_get_user()	±ØĞë£¬»ñÈ¡ÓÃ»§µÄĞÅÏ¢
- * uc_user_register()	±ØĞë£¬×¢²áÓÃ»§Êı¾İ
- * uc_authcode()	¿ÉÑ¡£¬½èÓÃÓÃ»§ÖĞĞÄµÄº¯Êı¼Ó½âÃÜ¼¤»î×Ö´®ºÍ Cookie
+ * åº”ç”¨ç¨‹åºæœ‰è‡ªå·±çš„ç”¨æˆ·è¡¨ï¼Œç”¨æˆ·æ³¨å†Œã€æ¿€æ´»çš„ Example ä»£ç 
+ * ä½¿ç”¨åˆ°çš„æ¥å£å‡½æ•°ï¼š
+ * uc_get_user()	å¿…é¡»ï¼Œè·å–ç”¨æˆ·çš„ä¿¡æ¯
+ * uc_user_register()	å¿…é¡»ï¼Œæ³¨å†Œç”¨æˆ·æ•°æ®
+ * uc_authcode()	å¯é€‰ï¼Œå€Ÿç”¨ç”¨æˆ·ä¸­å¿ƒçš„å‡½æ•°åŠ è§£å¯†æ¿€æ´»å­—ä¸²å’Œ Cookie
  */
 
 if(empty($_POST['submit'])) {
-	//×¢²á±íµ¥
+	//æ³¨å†Œè¡¨å•
 	echo '<form method="post" action="'.$_SERVER['PHP_SELF'].'?fun=register">';
 
 	if($_GET['action'] == 'activation') {
-		echo '¼¤»î:';
+		echo 'æ¿€æ´»:';
 		list($activeuser) = explode("\t", uc_authcode($_GET['auth'], 'DECODE'));
 		echo '<input type="hidden" name="activation" value="'.$activeuser.'">';
-		echo '<dl><dt>ÓÃ»§Ãû</dt><dd>'.$activeuser.'</dd></dl>';
+		echo '<dl><dt>ç”¨æˆ·å</dt><dd>'.$activeuser.'</dd></dl>';
 	} else {
-		echo '×¢²á:';
-		echo '<dl><dt>ÓÃ»§Ãû</dt><dd><input name="username"></dd>';
-		echo '<dt>ÃÜÂë</dt><dd><input name="password"></dd>';
+		echo 'æ³¨å†Œ:';
+		echo '<dl><dt>ç”¨æˆ·å</dt><dd><input name="username"></dd>';
+		echo '<dt>å¯†ç </dt><dd><input name="password"></dd>';
 		echo '<dt>Email</dt><dd><input name="email"></dd>';
-		echo '<dt>ÊÖ»úIMEI</dt><dd><input name="imei"></dd></dl>';
+		echo '<dt>æ‰‹æœºIMEI</dt><dd><input name="imei"></dd></dl>';
 	}
 	echo '<input name="submit" type="submit">';
 	echo '</form>';
 } else {
-	//ÔÚUCenter×¢²áÓÃ»§ĞÅÏ¢
+	//åœ¨UCenteræ³¨å†Œç”¨æˆ·ä¿¡æ¯
 	$username = '';
 	if(!empty($_POST['activation']) && ($activeuser = uc_get_user($_POST['activation']))) {
 		list($uid, $username) = $activeuser;
 	} else {
 		if(uc_get_user($_POST['username']) && !$db->result_first("SELECT uid FROM {$tablepre}members WHERE username='$_POST[username]'")) {
-			//ÅĞ¶ÏĞèÒª×¢²áµÄÓÃ»§Èç¹ûÊÇĞèÒª¼¤»îµÄÓÃ»§£¬ÔòĞèÌø×ªµ½µÇÂ¼Ò³ÃæÑéÖ¤
-			echo '¸ÃÓÃ»§ÎŞĞè×¢²á£¬Çë¼¤»î¸ÃÓÃ»§<br><a href="'.$_SERVER['PHP_SELF'].'?fun=login">¼ÌĞø</a>';
+			//åˆ¤æ–­éœ€è¦æ³¨å†Œçš„ç”¨æˆ·å¦‚æœæ˜¯éœ€è¦æ¿€æ´»çš„ç”¨æˆ·ï¼Œåˆ™éœ€è·³è½¬åˆ°ç™»å½•é¡µé¢éªŒè¯
+			echo 'è¯¥ç”¨æˆ·æ— éœ€æ³¨å†Œï¼Œè¯·æ¿€æ´»è¯¥ç”¨æˆ·<br><a href="'.$_SERVER['PHP_SELF'].'?fun=login">ç»§ç»­</a>';
 			exit;
 		}
 
 		$uid = uc_user_register($_POST['username'], $_POST['password'], $_POST['email']);
 		if($uid <= 0) {
 			if($uid == -1) {
-				echo 'ÓÃ»§Ãû²»ºÏ·¨';
+				echo 'ç”¨æˆ·åä¸åˆæ³•';
 			} elseif($uid == -2) {
-				echo '°üº¬ÒªÔÊĞí×¢²áµÄ´ÊÓï';
+				echo 'åŒ…å«è¦å…è®¸æ³¨å†Œçš„è¯è¯­';
 			} elseif($uid == -3) {
-				echo 'ÓÃ»§ÃûÒÑ¾­´æÔÚ';
+				echo 'ç”¨æˆ·åå·²ç»å­˜åœ¨';
 			} elseif($uid == -4) {
-				echo 'Email ¸ñÊ½ÓĞÎó';
+				echo 'Email æ ¼å¼æœ‰è¯¯';
 			} elseif($uid == -5) {
-				echo 'Email ²»ÔÊĞí×¢²á';
+				echo 'Email ä¸å…è®¸æ³¨å†Œ';
 			} elseif($uid == -6) {
-				echo '¸Ã Email ÒÑ¾­±»×¢²á';
+				echo 'è¯¥ Email å·²ç»è¢«æ³¨å†Œ';
 			} else {
-				echo 'Î´¶¨Òå';
+				echo 'æœªå®šä¹‰';
 			}
 		} else {
 			$username = $_POST['username'];
@@ -64,9 +64,9 @@ if(empty($_POST['submit'])) {
 	if($username) {
 		$db->query("INSERT INTO {$tablepre}members (uid,username,admin) VALUES ('$uid','$username','0')");
 		$db->query("INSERT INTO {$tablepre}members_imei (uid,imei) VALUES ('$uid','$imei')");
-		//×¢²á³É¹¦£¬ÉèÖÃ Cookie£¬¼ÓÃÜÖ±½ÓÓÃ uc_authcode º¯Êı£¬ÓÃ»§Ê¹ÓÃ×Ô¼ºµÄº¯Êı
+		//æ³¨å†ŒæˆåŠŸï¼Œè®¾ç½® Cookieï¼ŒåŠ å¯†ç›´æ¥ç”¨ uc_authcode å‡½æ•°ï¼Œç”¨æˆ·ä½¿ç”¨è‡ªå·±çš„å‡½æ•°
 		setcookie('Cta_auth', uc_authcode($uid."\t".$username."\t".$imei, 'ENCODE'));
-		echo '×¢²á³É¹¦<br><a href="'.$_SERVER['PHP_SELF'].'">¼ÌĞø</a>';
+		echo 'æ³¨å†ŒæˆåŠŸ<br><a href="'.$_SERVER['PHP_SELF'].'">ç»§ç»­</a>';
 		exit;
 	}
 }
