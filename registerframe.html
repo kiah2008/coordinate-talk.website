@@ -16,7 +16,7 @@ $(document).ready(function()
 	{
 		$('#registerForm').submit(function(){
 			jQuery.ajax({
-					url:"code/register_db.php",
+					url:"code/register_db.php?submit=1",
 					data:$('#registerForm').serialize(),
 					type:"POST",
 					beforeSend:function(){
@@ -28,6 +28,7 @@ $(document).ready(function()
 					},
 					success:function(data){
 						new screenClass().unlock();	
+						alert(data);
 					}
 				});
 			return false;
@@ -74,12 +75,13 @@ var screenClass = function(){
 <body>
 	<form id="registerForm" method="post">
 		<ul>
-			<li>您的常用邮箱:<input type="text" name="txtUserName" /> </li>
+			<li>您的常用邮箱:<input type="text" name="txtEmail" /> </li>
 			<li>密码:<input type="text" name="txtPass" /> </li>
 			<li>确认密码:<input type="text" name="txtRPass" /> </li>
-			<li>手机串号:<input type="text" name="txtImei" /> </li>
-			<li><input type="checkbox" CHECKED="checked" value="on"/></li>
-			<li><input type="Submit" value="登陆"/><input type="button"  onclick="self.parent.tb_remove();" value="取消"/></li>
+			<li>昵称:<input type="text" name="txtNickName" /> </li>
+			<li>手机串号:<input type="text" name="txtImei" /> 怎么取得我手机的IMEI</li>
+			<li><input type="checkbox" CHECKED="checked" value="on"/>同意协议</li>
+			<li><input type="Submit" value="注册"/><input type="button"  onclick="self.parent.tb_remove();" value="取消"/></li>
 		</ul>
 		<input type="button" onclick="self.parent.testabc()" value="t"/>
 	</form>
