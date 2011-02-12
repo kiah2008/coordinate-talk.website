@@ -229,7 +229,8 @@ table{
             $altitude = $row['altitude'];
             $create_date = $row['create_date'];
             $address=$row['address_zh'];
-            $html = "$html<tr><td>$username</td><td>$note</td><td>$latitude<br/>$longitude<br/>$altitude</td><td>$address</td><td>$create_date</td><td><img src=\"http://maps.google.com/maps/api/staticmap?center=$latitude,$longitude&zoom=15&size=300x200&maptype=hybrid&markers=color:blue|label:C|$latitude,$longitude&sensor=false\" alt=\"$address\"/></td></tr>\n";
+            list($uid, $username, $email)=uc_get_user( $username );
+            $html = "$html<tr><td><img src=\"http://guohai.org/ucenter/avatar.php?uid=$uid&size=small\" /><br>$username</td><td>$note</td><td>$latitude<br/>$longitude<br/>$altitude</td><td>$address</td><td>$create_date</td><td><img src=\"http://maps.google.com/maps/api/staticmap?center=$latitude,$longitude&zoom=17&size=300x200&maptype=hybrid&markers=color:blue|label:C|$latitude,$longitude&sensor=false\" alt=\"$address\"/></td></tr>\n";
         }
         return $html;
     }
