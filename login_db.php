@@ -8,12 +8,12 @@
  * uc_authcode()	可选，借用用户中心的函数加解密激活字串和 Cookie
  * uc_user_synlogin()	可选，生成同步登录的代码
  */
-include '../config.inc.php';
-include '../include/db_mysql.class.php';
+include './config.inc.php';
+include './include/db_mysql.class.php';
 $db = new dbstuff;
 $db->connect($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
 unset($dbhost, $dbuser, $dbpw, $dbname, $pconnect);
-include '../cta_client/client.php';
+include './cta_client/client.php';
 if(!empty($_GET['submit'])) {
 	if(stripos($_POST['username'],"@")){
 		list($uid, $username, $password, $email) = uc_user_login($_POST['username'], $_POST['password'],2);
@@ -36,7 +36,7 @@ if(!empty($_GET['submit'])) {
 		setcookie('Cta_auth', uc_authcode($uid."\t".$username."\t".$imei, 'ENCODE'));
 		//生成同步登录的代码
 		$ucsynlogin = uc_user_synlogin($uid);
-		echo '登录成功'.$ucsynlogin.'<br><a href="'.$_SERVER['PHP_SELF'].'">继续</a>';
+		echo 'succeed';
 		exit;
 	} elseif($uid == -1) {
 		echo '用户不存在,或者被删除';
