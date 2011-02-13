@@ -13,10 +13,13 @@ include './cta_client/client.php';
  * 获取当前用户的 UID 和 用户名
  * Cookie 解密直接用 uc_authcode 函数，用户使用自己的函数
  */
- 
+
 if(!empty($_COOKIE['Cta_auth'])) {
+	
 	list($Cta_uid, $Cta_username,$Cta_imei) = explode("\t", uc_authcode($_COOKIE['Cta_auth'], 'DECODE'));
+	echo 'cookie not empty';
 } else {
+	echo 'cookie empty';
 	$Cta_uid = $Cta_username = $Cta_imei = '';
 }
 ?>
@@ -41,7 +44,7 @@ function initialize(){
 }
 <?php 
 	$DB = new MySqlClass(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
-	$sql = "SELECT a.code, c.username, note, latitude, longitude, create_date, altitude, address_zh FROM `cta_message` a JOIN cta_members_imei b ON a.send_account = b.imei JOIN cta_members c ON b.uid = c.uid ORDER BY `code` DESC LIMIT 0 , 30 ";
+	$sql = "SELECT a.code, c.username, note, latitude, longitude, create_date, altitude, address_zh FROM `cta_message` a JOIN cta_members_imei b ON a.send_account = b.imei JOIN cta_members c ON b.uid = c.uid ORDER BY `code` DESC LIMIT 0 , 10 ";
 	$result=$DB->ExeSql($sql);
 	echo "var beaches = [";
 	while($row=$DB->getRowResult($result))
@@ -107,7 +110,7 @@ $(document).ready(function()
 	{
 		$('#loginform').submit(function(){
 			jQuery.ajax({
-					url:"code/login.php",
+					url:"login_db.php?submit=1",
 					data:$('#loginform').serialize(),
 					type:"POST",
 					beforeSend:function(){
@@ -119,6 +122,12 @@ $(document).ready(function()
 					},
 					success:function(data){
 						new screenClass().unlock();	
+						if('succeed' == data){
+							window.location.reload(); 
+						}
+						else{
+							alert(data);
+						}
 					}
 				});
 			return false;
@@ -202,12 +211,12 @@ table{
 		//登录表单
 		echo '<form id="loginform" method="post" action="'.$_SERVER['PHP_SELF'].'?fun=login">';
 		echo '登录:';
-		echo '<dl><dt>用户名</dt><dd><input name="username" size="20"/></dd>';
-		echo '<dt>密　码</dt><dd><input name="password" type="password" size="20"/></dd></dl>';
+		echo '<dl><dt>账号：</dt><dd><input name="username" size="20" value="邮箱/昵称"/></dd>';
+		echo '<dt>密码：</dt><dd><input name="password" type="password" size="20"/></dd></dl>';
 		echo '<input type="Submit" value="登陆"/><a href="registerframe.html?KeepThis=true&TB_iframe=true&height=400&width=600" class="thickbox" title="注册">注册</a>';
 		echo '</form>';
     }else{
-    	
+    	echo "<img src=\"http://guohai.org/ucenter/avatar.php?uid=$Cta_uid&size=middle\" />$Cta_username";
     }
     
     ?>
@@ -216,7 +225,7 @@ table{
     <?php
 	function GetMessageList($DB)
     {
-        $sql = "SELECT a.code, c.username, note, latitude, longitude, create_date, altitude, address_zh FROM `cta_message` a JOIN cta_members_imei b ON a.send_account = b.imei JOIN cta_members c ON b.uid = c.uid ORDER BY `code` DESC LIMIT 0 , 30 ";
+        $sql = "SELECT a.code, c.username, note, latitude, longitude, create_date, altitude, address_zh FROM `cta_message` a JOIN cta_members_imei b ON a.send_account = b.imei JOIN cta_members c ON b.uid = c.uid ORDER BY `code` DESC LIMIT 0 , 10 ";
         $result=$DB->ExeSql($sql);
         $html = "";
         while($row=$DB->getRowResult($result))

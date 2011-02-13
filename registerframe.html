@@ -16,7 +16,7 @@ $(document).ready(function()
 	{
 		$('#registerForm').submit(function(){
 			jQuery.ajax({
-					url:"code/register_db.php?submit=1",
+					url:"register_db.php?submit=1",
 					data:$('#registerForm').serialize(),
 					type:"POST",
 					beforeSend:function(){
@@ -28,7 +28,13 @@ $(document).ready(function()
 					},
 					success:function(data){
 						new screenClass().unlock();	
-						alert(data);
+						//alert(data);
+						if('succeed' == data){
+							self.parent.location.reload();
+						}
+						else{
+							alert(data);
+						}
 					}
 				});
 			return false;
