@@ -14,14 +14,7 @@ include './cta_client/client.php';
  * Cookie 解密直接用 uc_authcode 函数，用户使用自己的函数
  */
 
-if(!empty($_COOKIE['Cta_auth'])) {
-	
-	list($Cta_uid, $Cta_username,$Cta_imei) = explode("\t", uc_authcode($_COOKIE['Cta_auth'], 'DECODE'));
-	echo 'cookie not empty';
-} else {
-	echo 'cookie empty';
-	$Cta_uid = $Cta_username = $Cta_imei = '';
-}
+include './include/cookie.php';
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">
 <html>
@@ -175,9 +168,7 @@ function testabc(){
 }
 </script>
 <style type="text/css">
-body{
-	font-size:12px;
-}
+@import "style/global.css";
 table{
 	font-size:12px;
 }
@@ -216,7 +207,7 @@ table{
 		echo '<input type="Submit" value="登陆"/><a href="registerframe.html?KeepThis=true&TB_iframe=true&height=400&width=600" class="thickbox" title="注册">注册</a>';
 		echo '</form>';
     }else{
-    	echo "<img src=\"http://guohai.org/ucenter/avatar.php?uid=$Cta_uid&size=middle\" />$Cta_username";
+    	echo "<a href=\"member.php?typeid=3\"><img src=\"http://guohai.org/ucenter/avatar.php?uid=$Cta_uid&size=middle\" /></a>$Cta_username";
     }
     
     ?>

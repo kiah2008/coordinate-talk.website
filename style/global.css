@@ -1,5 +1,23 @@
 @CHARSET "UTF-8";
 BODY{
 	text-align:center;
-	font-size:14px;
+	font:12px/1.6em Verdana,Helvetica,Arial,sans-serif;
+}
+TD {
+	FONT: 12px/1.6em Verdana,Helvetica,Arial,sans-serif;
+	COLOR: #444;
+}
+UL {
+	PADDING-BOTTOM: 0px;
+	MARGIN: 0px;
+	PADDING-LEFT: 0px;
+	PADDING-RIGHT: 0px;
+	PADDING-TOP: 0px
+}
+LI {
+	PADDING-BOTTOM: 0px;
+	MARGIN: 0px;
+	PADDING-LEFT: 0px;
+	PADDING-RIGHT: 0px;
+	PADDING-TOP: 0px
 }
