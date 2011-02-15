@@ -73,7 +73,7 @@ switch(@$_GET['fun'])
 		$Longitude = $_POST['Longitude'];
 		$AddressZH=GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");
 		ParseGPS($DB,$AddressZH,$SendAccount);
-		echo $AddressZH;
+		echo "{'state':'1001','message':'$AddressZH'}";
 		break;
 	case 'add':
 		$Note = $_POST['Note'];
@@ -82,8 +82,9 @@ switch(@$_GET['fun'])
 		$Longitude = $_POST['Longitude'];
 		$Altitude = $_POST['Altitude'];
 		$AddressZH=GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");
-		$AddressEN=GetAddress("http://maps.google.cn/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");;
-		AddNewMessage($DB,$Note,$SendAccount,$Latitude,$Longitude,$AddressZH,$AddressEN);
+		$AddressEN="a";//GetAddress("http://maps.google.cn/maps/api/geocode/json?latlng=".$Latitude.",".$Longitude."&sensor=true");;
+		AddNewMessage($DB,$Note,$SendAccount,$Latitude,$Longitude,$Altitude,$AddressZH,$AddressEN);
+		echo "{'state':'1003','message':'SendMessageSucceed'}";
 		break;
 	case 'gsm':
 		$cellId = $_POST['cid'];
@@ -95,7 +96,7 @@ switch(@$_GET['fun'])
 		$arr = json_decode($jsonString,true);
 		$latitude = empty($arr["location"]["latitude"])?0.0:$arr["location"]["latitude"];
 		$longitude = empty($arr["location"]["longitude"])?0.0:$arr["location"]["longitude"];
-		echo $latitude.",".$longitude;
+		echo "{'state':'1002','message':'$latitude,$longitude'}";
 		$address = GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$latitude.",".$longitude."&sensor=true");
 		GsmLog($DB,$cellId,$locationAreaCode,$mobileCountryCode,$mobileNetworkCode,$imei,$latitude,$longitude,$address);
 		break;
