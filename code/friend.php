@@ -1,43 +1,37 @@
 <?php
 /**
- * UCenter Ó¦ÓÃ³ÌÐò¿ª·¢ Example
+ * UCenter åº”ç”¨ç¨‹åºå¼€å‘ Example
  *
- * ÁÐ³öºÃÓÑµÄ Example ´úÂë
- * Ê¹ÓÃµ½µÄ½Ó¿Úº¯Êý£º
- * uc_friend_totalnum()	±ØÐë£¬·µ»ØºÃÓÑ×ÜÊý
- * uc_friend_ls()	±ØÐë£¬·µ»ØºÃÓÑÁÐ±í
- * uc_friend_delete()	±ØÐë£¬É¾³ýºÃÓÑ
- * uc_friend_add()	±ØÐë£¬Ìí¼ÓºÃÓÑ
+ * åˆ—å‡ºå¥½å‹çš„ Example ä»£ç 
+ * ä½¿ç”¨åˆ°çš„æŽ¥å£å‡½æ•°ï¼š
+ * uc_friend_totalnum()	å¿…é¡»ï¼Œè¿”å›žå¥½å‹æ€»æ•°
+ * uc_friend_ls()	å¿…é¡»ï¼Œè¿”å›žå¥½å‹åˆ—è¡¨
+ * uc_friend_delete()	å¿…é¡»ï¼Œåˆ é™¤å¥½å‹
+ * uc_friend_add()	å¿…é¡»ï¼Œæ·»åŠ å¥½å‹
  */
+require_once './config.inc.php';
+include './cta_client/client.php';
+include './include/cookie.php';
 
-if(empty($_POST['submit'])) {
-	$num = uc_friend_totalnum($Example_uid);
-	echo 'ÄúÓÐ '.$num.' ¸öºÃÓÑ';
-	echo '<form method="post" action="'.$_SERVER['PHP_SELF'].'?fun=friend">';
-	$friendlist = uc_friend_ls($Example_uid, 1, 999, $num);
-	if($friendlist) {
-		foreach($friendlist as $friend) {
-			echo '<input type="checkbox" name="delete[]" value="'.$friend['friendid'].'">';
-			switch($friend['direction']) {
-				case 1: echo '[¹Ø×¢]';break;
-				case 3: echo '[ºÃÓÑ]';break;
+if(empty($_POST['fun'])) {
+	switch($_POST['fun']){
+		case 'add':
+			if($_POST['newfriend'] && $friendid = uc_get_user($_POST['newfriend'])) {
+				uc_friend_add($Cta_uid, $friendid[0], $_POST['newcomment']);
 			}
-			echo $friend['username'].':'.$friend['comment'].'<br>';
-		}
+			break;
+		case 'del':
+			if(!empty($_POST['delete']) && is_array($_POST['delete'])) {
+				uc_friend_delete($Cta_uid, $_POST['delete']);
+			}
+			break;
+		case 'frtn':
+			$num = uc_friend_totalnum($Cta_uid);
+			break;
+		case 'frls':
+			$friendlist = uc_friend_ls($Cta_uid, 1, 999, $num);
+			break;
 	}
-	echo 'Ìí¼ÓºÃÓÑ:<input name="newfriend"> ËµÃ÷:<input name="newcomment"><br>';
-	echo '<input name="submit" type="submit"> ';
-	echo '</form>';
-} else {
-	if(!empty($_POST['delete']) && is_array($_POST['delete'])) {
-		uc_friend_delete($Example_uid, $_POST['delete']);
-	}
-	if($_POST['newfriend'] && $friendid = uc_get_user($_POST['newfriend'])) {
-		uc_friend_add($Example_uid, $friendid[0], $_POST['newcomment']);
-	}
-	echo 'ºÃÓÑ×ÊÁÏÒÑ¸üÐÂ<br><a href="'.$_SERVER['PHP_SELF'].'?example=friend">¼ÌÐø</a>';
-	exit;
 }
-
 
 ?>
