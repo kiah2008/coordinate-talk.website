@@ -27,6 +27,13 @@ $DB = new MySqlClass(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
         return "succeed";
     }
     
+    function GetNearbyMessage()
+    {
+    	//长宽各230米的数据
+    	$sql="SELECT * FROM `cta_message` WHERE `latitude` >= 40.0811934471119 - 0.001 AND `latitude` <= 40.0811934471119 + 0.001 AND `longitude` >= 116.347553730008 - 0.001 AND `longitude` <= 116.347553730008 + 0.001 LIMIT 0 , 30 ";
+    	
+    }
+    
     //通过坐标取物理地址
     function GetAddress($url)
 	{
