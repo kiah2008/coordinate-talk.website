@@ -107,6 +107,13 @@ switch(@$_GET['fun'])
 		$address = GetAddress("http://maps.google.com/maps/api/geocode/json?latlng=".$latitude.",".$longitude."&sensor=true");
 		GsmLog($DB,$cellId,$locationAreaCode,$mobileCountryCode,$mobileNetworkCode,$imei,$latitude,$longitude,$address);
 		break;
+	case 'reg':
+		$email = $_POST['email'];
+		$nick = $_POST['nick'];
+		$pass = $_POST['pass'];
+		$imei =$_POST['imei'];
+		
+		break;
 }
     
 
