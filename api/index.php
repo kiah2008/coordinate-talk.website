@@ -126,7 +126,7 @@ switch(@$_GET['fun'])
 		$Latitude = $_POST['Latitude'];
 		$Longitude = $_POST['Longitude'];
 		$localMessage = GetNearbyMessage($DB,$Latitude,$Longitude);
-		echo "{\"state\":1006,\"message\":\"{\"data\":$localMessage}\"}";
+		echo "{'state':'1006','message':'$localMessage'}";
 		break;
 }
     
