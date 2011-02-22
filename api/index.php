@@ -27,11 +27,19 @@ $DB = new MySqlClass(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
         return "succeed";
     }
     
-    function GetNearbyMessage()
+    function GetNearbyMessage($DB,$Latitude,$Longitude)
     {
     	//长宽各230米的数据
-    	$sql="SELECT * FROM `cta_message` WHERE `latitude` >= 40.0811934471119 - 0.001 AND `latitude` <= 40.0811934471119 + 0.001 AND `longitude` >= 116.347553730008 - 0.001 AND `longitude` <= 116.347553730008 + 0.001 LIMIT 0 , 30 ";
-    	
+    	$sql="SELECT b.uid, username, note FROM `cta_message` a JOIN cta_members_imei b ON a.send_account = b.imei JOIN cta_members c ON b.uid = c.uid WHERE `latitude` >= $Latitude - 0.001 AND `latitude` <= $Latitude + 0.001 AND `longitude` >= $Longitude - 0.001 AND `longitude` <= $Longitude + 0.001 ORDER BY a.code DESC LIMIT 0 , 30 ";
+    	//echo $sql;
+    	$result=$DB->ExeSql($sql);
+    	$message = array();
+    	while($row=$DB->getRowResult($result))
+    	{
+    		//var_dump(array("uid"=>$row['uid'],"username"=>$row['username'],"note"=>$row['note']));
+    		$message[] = array("uid"=>$row['uid'],"username"=>$row['username'],"note"=>$row['note']);
+    	}
+    	return json_encode($message);
     }
     
     //通过坐标取物理地址
@@ -113,6 +121,12 @@ switch(@$_GET['fun'])
 		$pass = $_POST['pass'];
 		$imei =$_POST['imei'];
 		
+		break;
+	case 'getLocalMessage':
+		$Latitude = $_POST['Latitude'];
+		$Longitude = $_POST['Longitude'];
+		$localMessage = GetNearbyMessage($DB,$Latitude,$Longitude);
+		echo "{\"state\":1006,\"message\":\"{\"data\":$localMessage}\"}";
 		break;
 }
     
