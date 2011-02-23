@@ -27,6 +27,7 @@ $DB = new MySqlClass(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
         return "succeed";
     }
     
+    //通过坐标取相应信息
     function GetNearbyMessage($DB,$Latitude,$Longitude)
     {
     	//长宽各230米的数据
@@ -40,6 +41,22 @@ $DB = new MySqlClass(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
     		$message[] = array("uid"=>$row['uid'],"username"=>$row['username'],"note"=>$row['note']);
     	}
     	return json_encode($message);
+    }
+    
+    //取用户信息
+    function GetUserInfo($DB,$imei)
+    {
+    	$sql="SELECT a.uid,username,imei FROM `cta_members` a join `cta_members_imei` b on a.uid=b.uid WHERE imei='$imei'";
+    	$result=$DB->ExeSql($sql);
+    	if($row =$DB->getRowResult($result))
+    	{
+    		$info = array("uid"=>$row['uid'],"name"=>$row['username'],"imei"=>$row['imei'],"face"=>"http://guohai.org/ucenter/avatar.php?uid=".$row['uid']."&size=small");
+    	}
+    	else
+    	{
+    		$info = array("uid"=>0,"name"=>"请注册","imei"=>$imei,"face"=>"http://android.guohai.org/icon.png");
+    	}
+    	return json_encode($info);
     }
     
     //通过坐标取物理地址
@@ -127,6 +144,11 @@ switch(@$_GET['fun'])
 		$Longitude = $_POST['Longitude'];
 		$localMessage = GetNearbyMessage($DB,$Latitude,$Longitude);
 		echo "{'state':'1006','message':'$localMessage'}";
+		break;
+	case 'getuser':
+		$imei = $_POST['imei'];
+		$userinfo = GetUserInfo($DB,$imei);
+		echo "{'state':'1007','message':'$userinfo'}";
 		break;
 }
     
